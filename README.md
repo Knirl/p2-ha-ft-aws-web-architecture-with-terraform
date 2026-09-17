@@ -141,7 +141,7 @@ Everything below is a list of improvements for this project to level up, next pr
 - **Tagging strategy** — Standardize global tags via default_tags, pass instance tags in Launch Template tag_specifications, and implement consistent resource tagging across all modules.
 - **Hypervisor-level IMDSv2** — Enforce `http_tokens = "required"` in Launch Template `metadata_options` to disable IMDSv1 fallbacks globally, building on v1's script-level compliance.
 - **KMS & Secrets Management** — Use a Customer Managed Key (`aws_kms_key`) for RDS/Secrets Manager and set `recovery_window_in_days = 0` on dev secrets for fast test teardowns.
-- **1 NAT Gateway per AZ"" - No more single point of failure, this is the
+- **1 NAT Gateway per AZ** - No more single point of failure, this is the
 - **Functional S3 integration** — Attach an IAM Instance Profile to EC2 so User Data dynamically fetches app assets (`aws s3 cp`) from the private S3 bucket on boot.
 - **Code hygiene** — Run `terraform fmt -recursive` and `terraform validate` prior to every commit.
 - **Local security scanning** — Run `tfsec` or `checkov` locally before committing and document findings in the README.
