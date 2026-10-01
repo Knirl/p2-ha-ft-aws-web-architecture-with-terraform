@@ -127,7 +127,7 @@ terraform destroy
 
 Terraform resolves deletion order automatically from its dependency graph. `state-bootstrap/` is intentionally left running rather than destroyed alongside it, since it holds this project's remote state.
 
-## Roadmap: v2
+## Roadmap: [v2](https://github.com/Knirl/p2p3-ha-ft-aws-web-architecture-terraform-cicd)
 
 Everything below is a list of improvements for this project to level up, next project will be the version 2.
 
