@@ -1,4 +1,4 @@
-# PROJECT 2: Highly Available AWS Web Architecture — Terraform Edition
+# PROJECT 2: Infrastructure as Code (IaC) with Terraform for AWS Web Architecture 
 
 A Terraform reimplementation of [Project 1: Highly Available, Fault-Tolerant AWS Web Architecture](https://github.com/Knirl/aws-ha-fault-tolerant-architecture.git) — same infrastructure, same design goals, this time provisioned entirely as code instead of built manually through the AWS Console.
 
