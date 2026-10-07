@@ -131,16 +131,37 @@ Terraform resolves deletion order automatically from its dependency graph. `stat
 
 Everything below is a list of improvements for this project to level up, next project will be the version 2.
 
-**Must-have:**
-- **`variables.tf` + `terraform.tfvars`** — Extract hardcoded parameters (CIDRs, instance sizes) into typed variables with strict input validation rules.
-- **Modules** — Reorganize flat files into `modules/` (`vpc`, `security`, `database`, `compute`, `alb`, `observability`). Decouple ASG and ALB using `aws_autoscaling_attachment`.
-- **Cost-toggle variables** — Add boolean toggles (`enable_nat_gateway`, `rds_multi_az`) defaulting to `false`/single-AZ to control dev environment costs.
-- **Dynamic scaling safeguard** — Add `lifecycle { ignore_changes = [desired_capacity] }` to ASG to prevent Terraform from resetting CloudWatch scaling actions.
-- **`outputs.tf`** — Export ALB DNS name, RDS connection endpoint (sans credentials), and VPC IDs after apply.
-- **`terraform.tfvars.example`** — Commit a dummy variable template while gitignoring the actual `.tfvars`.
-- **Tagging strategy** — Standardize global tags via default_tags, pass instance tags in Launch Template tag_specifications, and implement consistent resource tagging across all modules.
-- **KMS & Secrets Management** — Use a Customer Managed Key (`aws_kms_key`) for RDS/Secrets Manager and set `recovery_window_in_days = 0` on dev secrets for fast test teardowns.
-- **1 NAT Gateway per AZ** - No more single point of failure, this is the
-- **Functional S3 integration** — Terraform writes its actual state to project2/terraform.tfstate inside your dedicated backend S3 bucket. Through the enable_ec2_s3_access = true toggle, S3 is wired into your compute module to store and serve application data
-- **Code hygiene** — Run `terraform fmt -recursive` and `terraform validate` prior to every commit.
-- **Local security scanning** — Run `trivy` or `checkov` locally before committing and document findings in the README.
+## Infrastructure & Architecture
+
+- **Modular Terraform** — Refactored the flat configuration into reusable modules and decoupled the ASG from the ALB with `aws_autoscaling_attachment`.
+- **Parameterized infrastructure** — Replaced hardcoded values such as CIDRs and instance sizes with typed variables and environment-specific configuration.
+- **Input validation** — Added Terraform `validation` blocks to catch invalid configuration values early.
+- **Standardized tagging** — Centralized common tags with `default_tags` and applied consistent resource tagging across modules.
+- **Improved outputs** — Exposed useful infrastructure details such as ALB DNS, RDS endpoint, and VPC IDs without exposing credentials.
+
+## Security & Secrets Management
+
+- **KMS encryption** — Added a Customer Managed KMS Key for RDS and Secrets Manager.
+- **Secure database credentials** — Generate credentials with `random_password` and store connection details in AWS Secrets Manager.
+- **Secure EC2 access** — Added IAM roles/instance profiles and AWS Systems Manager Session Manager, eliminating the need for SSH access.
+- **Least-privilege S3 access** — Restricted EC2 S3 permissions to the required bucket and actions.
+- **Improved S3 security** — Enabled versioning, encryption, and S3 Block Public Access.
+
+## Scalability & High Availability
+
+- **Improved Auto Scaling** — Prevented Terraform from resetting ASG capacity changed by AWS Auto Scaling with `ignore_changes`.
+- **Multi-AZ NAT Gateways** — Added one NAT Gateway per AZ with separate private routing for improved availability.
+- **Configurable RDS availability** — Added an `rds_multi_az` option for environment-specific database availability.
+
+## Cost & Environment Controls
+
+- **Configurable cost controls** — Added toggles for cost-intensive resources such as NAT Gateways and Multi-AZ RDS.
+- **Environment-aware infrastructure** — Added `dev`, `staging`, and `prod` configuration to control availability, cost, and production safeguards.
+
+## Application Integration & Engineering Practices
+
+- **S3 integration** — Separated the Terraform state bucket from application storage and integrated the application bucket with EC2 through IAM.
+- **Terraform validation & formatting** — Use `terraform fmt -recursive` and `terraform validate` as part of the development workflow.
+- **Security scanning** — Use Trivy to identify and document infrastructure security findings.
+- **Configuration hygiene** — Added `terraform.tfvars.example` and excluded actual `terraform.tfvars` from version control.
+
